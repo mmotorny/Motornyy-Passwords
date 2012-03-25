@@ -3,17 +3,18 @@
 
 <head>
   <link rel="stylesheet" href="browser_action_popup.css" type="text/css">
+  <script src="sjcl.js"></script>
   <script src="browser_action_popup.js"></script>
 </head>
 
-<body class="signin-box">
+<body class="signin-box" onload="onLoad()">
   <h2>
     Create unique password
     <img src="motornyy.png">
   </h2>
   <div>
     <div class="email-label">Master password</div>
-    <input type="password">
+    <input type="password" class="master-password-input">
   </div>
   <div>
     <div class="email-label">Confirm master password</div>
@@ -21,9 +22,9 @@
   </div>
   <div>
     <div class="email-label">URL</div>
-    <input type="text">
+    <input type="text" class="url-input">
   </div>
-  <input type="Button" class="g-button g-button-submit" value="Fill Form">
+  <input type="Button" class="g-button g-button-submit fill-form-button" value="Fill Form">
   <span class="text">with unique password or </span><a href="#">copy to clipboard</a>
 </body>
 
