@@ -1,0 +1,20 @@
+{
+  "name": "Motornyy Passwords",
+  "version": "1.0",
+  "description": "Prevents damage caused by reusing single password on different websites.",
+  // "permissions": [
+  //   "webRequest",
+  //   "webRequestBlocking",
+  //   "http://*/*",
+  //   "https://*/*"
+  // ],
+  "browser_action": {
+    "default_icon": "34-key.png",
+    "default_title": "Create unique password",
+    "default_popup": "browser_action_popup.html"
+  },
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["content_script.js"]
+  }]
+}
