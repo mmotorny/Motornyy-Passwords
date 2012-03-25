@@ -25,7 +25,9 @@ function onLoad() {
         active: true
       },
       function(tabs) {
-        urlInput.value = tabs[0].url;
+        var urlParser = document.createElement('a');
+        urlParser.href = tabs[0].url;
+        urlInput.value = urlParser.host;
       });
   });
 }
