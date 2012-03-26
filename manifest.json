@@ -6,14 +6,14 @@
     "48": "icon_48.png",
     "128": "icon_128.png"
   },
-  "permissions": ["tabs"],
+  "permissions": [
+    "http://*/*",
+    "https://*/*",
+    "tabs"
+  ],
   "browser_action": {
     "default_icon": "icon_18.png",
     "default_title": "Create unique password",
     "default_popup": "browser_action_popup.html"
-  },
-  "content_scripts": [{
-    "matches": ["http://*/*", "https://*/*"],
-    "js": ["content_script.js"]
-  }]
+  }
 }
