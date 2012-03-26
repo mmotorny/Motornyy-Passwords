@@ -8,16 +8,8 @@ function onLoad() {
   var fillFormButton = document.getElementsByClassName('fill-form-button')[0];
   var tabId;
 
-  var firstFocus = true;
-  urlInput.addEventListener('focus', function() {
-    if (firstFocus) {
-      firstFocus = false;
-      masterPasswordInput.focus();
-    }
-  });
-
   fillFormButton.addEventListener('click', function() {
-    // TODO(maksym): Rename to host.
+    // TODO(maksym): Rename to tag.
     var url = urlInput.value;
     var masterPassword = masterPasswordInput.value;
     var uniquePasswordBits = 
