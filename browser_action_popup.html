@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <link href='http://fonts.googleapis.com/css?family=Russo+One|Open+Sans+Condensed:700|Raleway:100|Orbitron' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="browser_action_popup.css" type="text/css">
   <script src="sjcl.js"></script>
   <script src="browser_action_popup.js"></script>
@@ -9,23 +10,40 @@
 
 <body class="signin-box" onload="onLoad()">
   <h2>
-    Create unique password
+    Invent password
     <img src="motornyy.png">
   </h2>
-  <div>
+  <div class="section">
     <div class="email-label">Master password</div>
     <input type="password" class="master-password-input">
   </div>
-  <div>
+  <div class="section">
     <div class="email-label">Confirm master password</div>
     <input type="password">
   </div>
-  <div>
-    <div class="email-label">Unique password tag</div>
+  <div class="section">
+    <div class="email-label">Tag</div>
     <input type="text" class="url-input">
   </div>
-  <input type="Button" class="g-button g-button-submit fill-form-button" value="Fill Form">
+  <div class="section">
+    <div class="email-label">Password</div>
+    <div class="pseudo-input" tabindex="-1">
+      <script>
+        for (var i = 0; i < 4; ++i) {
+          document.write('<div class="bit-row">');
+          for (var j = 0; j < 64; ++j) {
+            document.write('<div class="bit ' + (Math.random() < 0.5 ? 'bit-zero' : 'bit-one') + '"></div>');
+          }
+          document.write('</div>');
+        }
+      </script>
+    </div>
+    <span class="text">Click to copy to clipboard.</span>
+  </div>
+  <input type="Button" class="g-button g-button-submit fill-form-button" value="Fill form">
+  <!--
   <span class="text">with unique password or </span><a href="#">copy to clipboard</a>
+  -->
 </body>
 
 </html>
