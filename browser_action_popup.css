@@ -107,6 +107,7 @@ html {
 }
 
 .button {
+  font-family: inherit;
   font-weight: bold;
   margin: 0 4px 0 0;
   height: 32px;

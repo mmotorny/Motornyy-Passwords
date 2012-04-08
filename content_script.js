@@ -3,6 +3,6 @@ if (!injected) {
   injected = true;
 
   chrome.extension.onRequest.addListener(function(request) {
-    console.log(request.uniquePassword);
+    console.log(request.password);
   });
 }

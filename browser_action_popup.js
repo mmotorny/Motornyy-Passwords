@@ -22,6 +22,7 @@ function Popup(tab) {
       'master-password-message')[0];
   this.tagInput = document.getElementsByClassName('tag-input')[0];
   this.bitElements = document.getElementsByClassName('bit');
+  this.fillFormButton = document.getElementsByClassName('fill-form-button')[0];
 
   var urlParser = document.createElement('a');
   urlParser.href = tab.url;
@@ -41,6 +42,15 @@ function Popup(tab) {
   }.bind(this));
   
   this.tagInput.addEventListener('input', this.updatePassword.bind(this));
+  
+  this.fillFormButton.addEventListener('click', this.fillForm.bind(this));
+  
+  document.body.addEventListener('keypress', function(event) {
+    if (event.charCode == 13 && 
+        !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+      this.fillForm();
+    }
+  }.bind(this));
 }
 
 Popup.prototype.confirmMasterPassword = function() {
@@ -84,6 +94,16 @@ Popup.prototype.updatePassword = function() {
   this.password = new PasswordBuilder(passwordBits).build();
 };
 
+Popup.prototype.fillForm = function() {
+  chrome.tabs.executeScript(
+    this.tab.id, {file: 'content_script.js'}, function() {
+      chrome.tabs.sendRequest(this.tab.id, {
+        password: this.password
+      });
+      window.close();
+    }.bind(this));
+};
+
 function PasswordBuilder(bits) {
   this.bits = bits;
   this.password = '';
@@ -117,35 +137,3 @@ PasswordBuilder.prototype.addCharacter_ = function(characters, entropy) {
   this.bits = this.bits.substr(entropy);
   return true;
 };
-
-/*
-var tagInput = document.getElementsByClassName('tag-input')[0];
-var masterPasswordInput = 
-    document.getElementsByClassName('master-password-input')[0];
-var fillFormButton = document.getElementsByClassName('fill-form-button')[0];
-var tabId;
-
-fillFormButton.addEventListener('click', function() {
-  var tag = tagInput.value;
-  var masterPassword = masterPasswordInput.value;
-  var uniquePasswordBits = 
-      sjcl.misc.pbkdf2(masterPassword, sjcl.hash.sha256.hash(tag)).
-          map(function(word) {
-            var binaryWord = (word >= 0 ? word : POWER_2_32 + word).
-                toString(2);
-            return ZEROS_32.substr(0, 32 - binaryWord.length) + binaryWord;
-          }).join('');
-  
-  if (tabId === undefined) {
-    // TODO(maksym): Report error.
-  } else {
-    chrome.tabs.executeScript(tabId, {file: 'content_script.js'}, function() {
-      chrome.tabs.sendRequest(tabId, {
-        uniquePassword: new PasswordBuilder(uniquePasswordBits).build()
-      });
-      window.close();
-    });
-  }
-});
-*/
-
