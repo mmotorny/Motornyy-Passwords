@@ -13,7 +13,7 @@
   ],
   "browser_action": {
     "default_icon": "icon_18.png",
-    "default_title": "Create unique password",
+    "default_title": "Invent password",
     "default_popup": "browser_action_popup.html"
   }
 }

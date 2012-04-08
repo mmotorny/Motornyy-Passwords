@@ -47,7 +47,8 @@ function Popup(tab) {
   
   document.body.addEventListener('keypress', function(event) {
     if (event.charCode == 13 && 
-        !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+        !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey &&
+        event.target != this.fillFormButton) {
       this.fillForm();
     }
   }.bind(this));
@@ -91,7 +92,18 @@ Popup.prototype.updatePassword = function() {
       passwordBits[bitIndex] == '0' ? 'bit-zero' : 'bit-one');
   }
   
+  passwordBits = this.halvePasswordBits(this.halvePasswordBits(passwordBits));
   this.password = new PasswordBuilder(passwordBits).build();
+};
+
+Popup.prototype.halvePasswordBits = function(passwordBits) {
+  var halfOfPasswordBits = '';
+  for (var bitIndex = 0; bitIndex < passwordBits.length / 2; ++bitIndex) {
+    halfOfPasswordBits += 
+        passwordBits[bitIndex * 2] == passwordBits[bitIndex * 2 + 1] ? 
+            '0' : '1';
+  }
+  return halfOfPasswordBits;
 };
 
 Popup.prototype.fillForm = function() {
