@@ -2,32 +2,38 @@
 <html>
 
 <head>
-  <link href='http://fonts.googleapis.com/css?family=Russo+One|Open+Sans+Condensed:700|Raleway:100|Orbitron' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="browser_action_popup.css" type="text/css">
+  <title>Invent password</title>
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Orbitron">
+  <link rel="stylesheet" type="text/css" href="browser_action_popup.css">
   <script src="sjcl.js"></script>
   <script src="browser_action_popup.js"></script>
 </head>
 
-<body class="signin-box" onload="onLoad()">
-  <h2>
+<body class="popup" onload="onLoad()">
+  <div class="popup-title">
     Invent password
-    <img src="motornyy.png">
-  </h2>
-  <div class="section">
-    <div class="email-label">Master password</div>
-    <input type="password" class="master-password-input">
+    <img class="motornyy-logo" src="motornyy.png">
   </div>
+  
   <div class="section">
-    <div class="email-label">Confirm master password</div>
-    <input type="password">
+    <div class="label">Master password</div>
+    <input type="password" class="input master-password-input">
   </div>
+
   <div class="section">
-    <div class="email-label">Tag</div>
-    <input type="text" class="url-input">
+    <div class="label">Confirm master password</div>
+    <input type="password" class="input confirm-master-password-input">
+    <div class="error">Master password is not confirmed.</div>
   </div>
+
   <div class="section">
-    <div class="email-label">Password</div>
-    <div class="pseudo-input" tabindex="-1">
+    <div class="label">Tag</div>
+    <input type="text" class="input tag-input">
+  </div>
+
+  <div class="section">
+    <div class="label">Password</div>
+    <div class="input bit-input" tabindex="-1">
       <script>
         for (var i = 0; i < 4; ++i) {
           document.write('<div class="bit-row">');
@@ -38,12 +44,10 @@
         }
       </script>
     </div>
-    <span class="text">Click to copy to clipboard.</span>
+    <div class="information">Click to copy to clipboard.</div>
   </div>
-  <input type="Button" class="g-button g-button-submit fill-form-button" value="Fill form">
-  <!--
-  <span class="text">with unique password or </span><a href="#">copy to clipboard</a>
-  -->
+  
+  <input type="button" class="button fill-form-button" value="Fill form">
 </body>
 
 </html>
