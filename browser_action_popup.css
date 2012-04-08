@@ -66,7 +66,19 @@ html {
 }
 
 .error {
+  -webkit-transition: all 200ms;
   color: #dd4b39;
+  overflow: hidden;
+}
+
+.error-shown {
+  height: 15px;
+  opacity: 1;
+}
+
+.error-hidden {
+  height: 0;
+  opacity: 0;
 }
 
 .bit-input {
