@@ -78,6 +78,7 @@ html {
 }
 
 .bit {
+  -webkit-transition: background-color 500ms;
   display: inline-block;
   height: 5px;
   margin-right: 1px;
@@ -86,7 +87,7 @@ html {
 }
 
 .bit-zero {
-  background-color: #777; 
+  background-color: #999; 
 }
 
 .bit-one {
