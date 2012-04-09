@@ -14,6 +14,7 @@ function onLoad() {
 function Popup(tab) {
   this.tab = tab;
   
+  this.motornyyLogo = document.getElementsByClassName('motornyy-logo')[0];
   this.masterPasswordInput = document.getElementsByClassName(
       'master-password-input')[0];
   this.confirmMasterPasswordInput = document.getElementsByClassName(
@@ -31,6 +32,13 @@ function Popup(tab) {
 
   this.confirmMasterPassword();
   this.updatePassword();
+  
+  this.motornyyLogo.addEventListener('click', function() {
+    chrome.tabs.create({
+      url: 'http://motornyy.com/'
+    });
+    window.close();
+  });
 
   this.masterPasswordInput.addEventListener('input', function() {
     this.confirmMasterPassword();

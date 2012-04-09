@@ -17,6 +17,7 @@ html {
 }
 
 .motornyy-logo {
+  cursor: pointer;
   position: absolute;
   right: 0;
 }
