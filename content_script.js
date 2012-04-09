@@ -8,6 +8,9 @@ if (!injected) {
       var inputElement = inputElements[i];
       if (inputElement.type == 'password' && inputElement.value == '') {
         inputElement.focus();
+        if (document.activeElement != inputElement) {
+          continue;
+        }
         
         var keyDownEvent = document.createEvent('KeyboardEvent');
         keyDownEvent.initKeyboardEvent(
