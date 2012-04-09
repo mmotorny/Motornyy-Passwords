@@ -21,6 +21,7 @@ function Popup(tab) {
   this.masterPasswordMessage = document.getElementsByClassName(
       'master-password-message')[0];
   this.tagInput = document.getElementsByClassName('tag-input')[0];
+  this.bitInput = document.getElementsByClassName('bit-input')[0];
   this.bitElements = document.getElementsByClassName('bit');
   this.fillFormButton = document.getElementsByClassName('fill-form-button')[0];
 
@@ -42,6 +43,17 @@ function Popup(tab) {
   }.bind(this));
   
   this.tagInput.addEventListener('input', this.updatePassword.bind(this));
+
+  this.bitInput.addEventListener('click', function() {
+    var passwordInput = document.createElement('input');
+    passwordInput.type = 'text';
+    passwordInput.value = this.password;
+    document.body.appendChild(passwordInput);
+    passwordInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(passwordInput);
+    this.bitInput.focus();
+  }.bind(this));
   
   this.fillFormButton.addEventListener('click', this.fillForm.bind(this));
   

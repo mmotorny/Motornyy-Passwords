@@ -9,6 +9,7 @@
   "permissions": [
     "http://*/*",
     "https://*/*",
+    "clipboardWrite",
     "tabs"
   ],
   "browser_action": {
