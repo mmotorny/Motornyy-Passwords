@@ -26,9 +26,7 @@ function Popup(tab) {
   this.bitElements = document.getElementsByClassName('bit');
   this.fillFormButton = document.getElementsByClassName('fill-form-button')[0];
 
-  var urlParser = document.createElement('a');
-  urlParser.href = tab.url;
-  this.tagInput.value = urlParser.host;
+  this.tagInput.value = this.getSecondLevelDomain(tab.url);
 
   this.confirmMasterPassword();
   this.updatePassword();
@@ -73,6 +71,16 @@ function Popup(tab) {
     }
   }.bind(this));
 }
+
+Popup.prototype.getSecondLevelDomain = function(url) {
+  var urlParser = document.createElement('a');
+  urlParser.href = url;
+  var domain = urlParser.host;
+
+  var lastDotIndex = domain.lastIndexOf('.');
+  return lastDotIndex == -1 ? 
+      domain : domain.substr(domain.lastIndexOf('.', lastDotIndex - 1) + 1);
+};
 
 Popup.prototype.confirmMasterPassword = function() {
   this.masterPasswordMessage.classList.remove('error-shown');
