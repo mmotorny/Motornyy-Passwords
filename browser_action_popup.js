@@ -24,6 +24,8 @@ function Popup(tab) {
   this.tagInput = document.getElementsByClassName('tag-input')[0];
   this.bitInput = document.getElementsByClassName('bit-input')[0];
   this.bitElements = document.getElementsByClassName('bit');
+  this.shutterSound = document.getElementById('shutter-sound');
+  this.bitMessage = document.getElementsByClassName('bit-message')[0];
   this.fillFormButton = document.getElementsByClassName('fill-form-button')[0];
 
   this.tagInput.value = this.getSecondLevelDomain(tab.url);
@@ -50,16 +52,8 @@ function Popup(tab) {
   
   this.tagInput.addEventListener('input', this.updatePassword.bind(this));
 
-  this.bitInput.addEventListener('click', function() {
-    var passwordInput = document.createElement('input');
-    passwordInput.type = 'text';
-    passwordInput.value = this.password;
-    document.body.appendChild(passwordInput);
-    passwordInput.select();
-    document.execCommand('copy');
-    document.body.removeChild(passwordInput);
-    this.bitInput.focus();
-  }.bind(this));
+  this.bitInput.addEventListener(
+      'click', this.copyPasswordToClipboard.bind(this));
   
   this.fillFormButton.addEventListener('click', this.fillForm.bind(this));
   
@@ -132,6 +126,21 @@ Popup.prototype.halvePasswordBits = function(passwordBits) {
             '0' : '1';
   }
   return halfOfPasswordBits;
+};
+
+Popup.prototype.copyPasswordToClipboard = function() {
+  this.shutterSound.play();
+  
+  var passwordInput = document.createElement('input');
+  passwordInput.type = 'text';
+  passwordInput.value = this.password;
+  document.body.appendChild(passwordInput);
+  passwordInput.select();
+  document.execCommand('copy');
+  document.body.removeChild(passwordInput);
+  this.bitInput.focus();
+  
+  this.bitMessage.innerText = 'Copied to clipboard.';
 };
 
 Popup.prototype.fillForm = function() {
