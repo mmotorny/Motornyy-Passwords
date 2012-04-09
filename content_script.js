@@ -6,9 +6,28 @@ if (!injected) {
     var inputElements = document.getElementsByTagName('input');
     for (var i = 0; i < inputElements.length; ++i) {
       var inputElement = inputElements[i];
-      if (inputElement.type == 'password') {
+      if (inputElement.type == 'password' && inputElement.value == '') {
         inputElement.focus();
-        inputElement.value = request.password;
+        
+        var keyDownEvent = document.createEvent('KeyboardEvent');
+        keyDownEvent.initKeyboardEvent(
+            'keydown', true, true, window, '', '', 0, '', false, '');
+        inputElement.dispatchEvent(keyDownEvent);
+
+        var keyPressEvent = document.createEvent('KeyboardEvent');
+        keyPressEvent.initKeyboardEvent(
+            'keypress', true, true, window, '', '', 0, '', false, '');
+        inputElement.dispatchEvent(keyPressEvent);
+
+        var textEvent = document.createEvent('TextEvent');
+        textEvent.initTextEvent(
+            'textInput', true, true, window, request.password);
+        inputElement.dispatchEvent(textEvent);
+
+        var keyUpEvent = document.createEvent('KeyboardEvent');
+        keyUpEvent.initKeyboardEvent(
+            'keyup', true, true, window, '', '', 0, '', false, '');
+        inputElement.dispatchEvent(keyUpEvent);
       }
     }
   });
