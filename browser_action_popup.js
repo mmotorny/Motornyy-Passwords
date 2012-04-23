@@ -129,8 +129,6 @@ Popup.prototype.halvePasswordBits = function(passwordBits) {
 };
 
 Popup.prototype.copyPasswordToClipboard = function() {
-  this.shutterSound.play();
-  
   var passwordInput = document.createElement('input');
   passwordInput.type = 'text';
   passwordInput.value = this.password;
@@ -141,6 +139,7 @@ Popup.prototype.copyPasswordToClipboard = function() {
   this.bitInput.focus();
   
   this.bitMessage.innerText = 'Copied to clipboard.';
+  this.shutterSound.play();
 };
 
 Popup.prototype.fillForm = function() {
