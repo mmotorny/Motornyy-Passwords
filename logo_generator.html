@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Logo Generator</title>
+  <link rel="stylesheet" type="text/css" href="browser_action_popup.css">
+  <style type="text/css">
+    .bit-input-48 .bit-row {
+      height: 10px;
+    }
+
+    .bit-input-48 .bit {
+      height: 8px;
+      margin-right: 2px;
+      width: 8px;
+    }
+
+    .bit-input-48 .bit-zero {
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.4);
+    }
+
+    .bit-input-48 .bit-one {
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+      background: -webkit-linear-gradient(top, #666, #333);
+    }
+
+    .bit-input-128 .bit-row {
+      height: 29px;
+    }
+
+    .bit-input-128 .bit {
+      height: 25px;
+      margin-right: 4px;
+      width: 25px;
+    }
+
+    .bit-input-128 .bit-zero {
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .bit-input-128 .bit-one {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      background: -webkit-linear-gradient(top, #666, #333);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="input bit-input" style="height: 17px; padding: 2px 1px 1px 2px; width: 17px;" tabindex="-1">
+    <script>
+      for (var i = 0; i < 2; ++i) {
+        document.write('<div class="bit-row">');
+        for (var j = 0; j < 2; ++j) {
+          document.write('<div class="bit bit-' + ((i + j) % 2 == 0 ? 'zero' : 'one') + '"></div>');
+        }
+        document.write('</div>');
+      }
+    </script>
+  </div>
+
+  <p>
+  <div class="input bit-input bit-input-48" style="border-radius: 2px; height: 46px; padding: 3px 1px 1px 3px; width: 46px;" tabindex="-1">
+    <script>
+      for (var i = 0; i < 4; ++i) {
+        document.write('<div class="bit-row">');
+        for (var j = 0; j < 4; ++j) {
+          document.write('<div class="bit bit-' + ((i + j) % 2 == 0 ? 'zero' : 'one') + '"></div>');
+        }
+        document.write('</div>');
+      }
+    </script>
+  </div>
+
+  <p>
+  <div class="input bit-input bit-input-128" style="border-radius: 3px; height: 124px; padding: 5px 1px 1px 5px; width: 124px;" tabindex="-1">
+    <script>
+      for (var i = 0; i < 4; ++i) {
+        document.write('<div class="bit-row">');
+        for (var j = 0; j < 4; ++j) {
+          document.write('<div class="bit bit-' + ((i + j) % 2 == 0 ? 'zero' : 'one') + '"></div>');
+        }
+        document.write('</div>');
+      }
+    </script>
+  </div>
+</body>
+
+</html>
