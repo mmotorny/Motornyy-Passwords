@@ -21,6 +21,8 @@ function Popup(tab) {
       'confirm-master-password-input')[0];
   this.masterPasswordMessage = document.getElementsByClassName(
       'master-password-message')[0];
+  this.confirmMasterPasswordMessage = document.getElementsByClassName(
+      'confirm-master-password-message')[0];
   this.tagInput = document.getElementsByClassName('tag-input')[0];
   this.bitInput = document.getElementsByClassName('bit-input')[0];
   this.bitElements = document.getElementsByClassName('bit');
@@ -77,18 +79,21 @@ Popup.prototype.getSecondLevelDomain = function(url) {
 };
 
 Popup.prototype.confirmMasterPassword = function() {
-  this.masterPasswordMessage.classList.remove('error-shown');
-  this.masterPasswordMessage.classList.remove('error-hidden');
-  
   if (this.masterPasswordInput.value == '') {
-    this.masterPasswordMessage.innerText = 'Master password is empty.';
     this.masterPasswordMessage.classList.add('error-shown');
-  } else if (this.masterPasswordInput.value != 
-      this.confirmMasterPasswordInput.value) {
-    this.masterPasswordMessage.innerText = 'Master passwords doesn\'t match.';
-    this.masterPasswordMessage.classList.add('error-shown');
+    this.masterPasswordMessage.classList.remove('error-hidden');
   } else {
     this.masterPasswordMessage.classList.add('error-hidden');
+    this.masterPasswordMessage.classList.remove('error-shown');
+  }
+  
+  if (this.masterPasswordInput.value != 
+      this.confirmMasterPasswordInput.value) {
+    this.confirmMasterPasswordMessage.classList.add('error-shown');
+    this.confirmMasterPasswordMessage.classList.remove('error-hidden');
+  } else {
+    this.confirmMasterPasswordMessage.classList.add('error-hidden');
+    this.confirmMasterPasswordMessage.classList.remove('error-shown');
   }
 };
 
