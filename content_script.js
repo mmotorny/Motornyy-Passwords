@@ -2,7 +2,9 @@ var injected;
 if (!injected) {
   injected = true;
 
-  chrome.extension.onRequest.addListener(function(request) {
+  chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+    var passwordSet = false;
+
     var inputElements = document.getElementsByTagName('input');
     for (var i = 0; i < inputElements.length; ++i) {
       var inputElement = inputElements[i];
@@ -11,6 +13,8 @@ if (!injected) {
         if (document.activeElement != inputElement) {
           continue;
         }
+        
+        passwordSet = true;
         
         var keyDownEvent = document.createEvent('KeyboardEvent');
         keyDownEvent.initKeyboardEvent(
@@ -33,5 +37,7 @@ if (!injected) {
         inputElement.dispatchEvent(keyUpEvent);
       }
     }
+    
+    sendResponse(passwordSet);
   });
 }

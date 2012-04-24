@@ -29,6 +29,8 @@ function Popup(tab) {
   this.shutterSound = document.getElementById('shutter-sound');
   this.bitMessage = document.getElementsByClassName('bit-message')[0];
   this.fillFormButton = document.getElementsByClassName('fill-form-button')[0];
+  this.fillFormMessage = document.getElementsByClassName(
+      'fill-form-message')[0];
 
   this.tagInput.value = this.getSecondLevelDomain(tab.url);
 
@@ -152,8 +154,15 @@ Popup.prototype.fillForm = function() {
     this.tab.id, {file: 'content_script.js'}, function() {
       chrome.tabs.sendRequest(this.tab.id, {
         password: this.password
-      });
-      window.close();
+      },
+      function(passwordSet) {
+        if (passwordSet) {
+          window.close();
+        } else {
+          this.fillFormMessage.classList.add('error-shown');
+          this.fillFormMessage.classList.remove('error-hidden');
+        }
+      }.bind(this));
     }.bind(this));
 };
 
