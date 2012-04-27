@@ -81,13 +81,8 @@ Popup.prototype.getSecondLevelDomain = function(url) {
 };
 
 Popup.prototype.confirmMasterPassword = function() {
-  if (this.masterPasswordInput.value == '') {
-    this.masterPasswordMessage.classList.add('error-shown');
-    this.masterPasswordMessage.classList.remove('error-hidden');
-  } else {
-    this.masterPasswordMessage.classList.add('error-hidden');
-    this.masterPasswordMessage.classList.remove('error-shown');
-  }
+  this.masterPasswordMessage.innerText = 'Time to guess: ' + 
+      zxcvbn(this.masterPasswordInput.value).crack_time_display + '.';
   
   if (this.masterPasswordInput.value != 
       this.confirmMasterPasswordInput.value) {
