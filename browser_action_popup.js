@@ -96,33 +96,37 @@ Popup.prototype.confirmMasterPassword = function() {
   }
 };
 
-const POWER_2_32 = Math.pow(2, 32);
-const ZEROS_32 = new Array(32 + 1).join('0');
-
 Popup.prototype.updatePassword = function() {
   var masterPassword = this.masterPasswordInput.value;
   var tag = this.tagInput.value;
-  var passwordBits = 
-      sjcl.misc.pbkdf2(masterPassword, sjcl.hash.sha256.hash(tag)).
-          map(function(word) {
-            var binaryWord = (word >= 0 ? word : POWER_2_32 + word).
-                toString(2);
-            return ZEROS_32.substr(0, 32 - binaryWord.length) + binaryWord;
-          }).join('');
+  var passwordBits = convertWordArrayToBinaryString(
+      sjcl.misc.pbkdf2(masterPassword, sjcl.hash.sha256.hash(tag)));
 
+  passwordBits = halvePasswordBits(halvePasswordBits(passwordBits));
+  this.password = new PasswordBuilder(passwordBits).build();
+
+  var hashedPasswordBits = convertWordArrayToBinaryString(
+      sjcl.hash.sha256.hash(this.password));
   for (var bitIndex = 0; bitIndex < 256; ++bitIndex) {
     var bitElement = this.bitElements[bitIndex];
     bitElement.classList.remove('bit-zero');
     bitElement.classList.remove('bit-one');
     bitElement.classList.add(
-      passwordBits[bitIndex] == '0' ? 'bit-zero' : 'bit-one');
+      hashedPasswordBits[bitIndex] == '0' ? 'bit-zero' : 'bit-one');
   }
-  
-  passwordBits = this.halvePasswordBits(this.halvePasswordBits(passwordBits));
-  this.password = new PasswordBuilder(passwordBits).build();
 };
 
-Popup.prototype.halvePasswordBits = function(passwordBits) {
+const POWER_2_32 = Math.pow(2, 32);
+const ZEROS_32 = new Array(32 + 1).join('0');
+
+function convertWordArrayToBinaryString(words) {
+  return words.map(function(word) {
+    var binaryWord = (word >= 0 ? word : POWER_2_32 + word).toString(2);
+    return ZEROS_32.substr(0, 32 - binaryWord.length) + binaryWord;
+  }).join('');
+}
+
+function halvePasswordBits(passwordBits) {
   var halfOfPasswordBits = '';
   for (var bitIndex = 0; bitIndex < passwordBits.length / 2; ++bitIndex) {
     halfOfPasswordBits += 
@@ -130,7 +134,7 @@ Popup.prototype.halvePasswordBits = function(passwordBits) {
             '0' : '1';
   }
   return halfOfPasswordBits;
-};
+}
 
 Popup.prototype.copyPasswordToClipboard = function() {
   var passwordInput = document.createElement('input');
