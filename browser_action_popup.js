@@ -32,8 +32,8 @@ function Popup(tab) {
   this.fillFormMessage = document.getElementsByClassName(
       'fill-form-message')[0];
 
-  this.tagInput.value = this.getSecondLevelDomain(tab.url);
-
+  this.parseUrl(tab.url);
+  
   this.confirmMasterPassword();
   this.updatePassword();
   
@@ -70,13 +70,15 @@ function Popup(tab) {
   }.bind(this));
 }
 
-Popup.prototype.getSecondLevelDomain = function(url) {
+Popup.prototype.parseUrl = function(url) {
   var urlParser = document.createElement('a');
   urlParser.href = url;
   var domain = urlParser.host;
+  
+  this.scriptInjectionAllowed = urlParser.protocol != 'chrome:';
 
   var lastDotIndex = domain.lastIndexOf('.');
-  return lastDotIndex == -1 ? 
+  this.tagInput.value = lastDotIndex == -1 ? 
       domain : domain.substr(domain.lastIndexOf('.', lastDotIndex - 1) + 1);
 };
 
@@ -86,11 +88,11 @@ Popup.prototype.confirmMasterPassword = function() {
   
   if (this.masterPasswordInput.value != 
       this.confirmMasterPasswordInput.value) {
-    this.confirmMasterPasswordMessage.classList.add('error-shown');
     this.confirmMasterPasswordMessage.classList.remove('error-hidden');
+    this.confirmMasterPasswordMessage.classList.add('error-shown');
   } else {
-    this.confirmMasterPasswordMessage.classList.add('error-hidden');
     this.confirmMasterPasswordMessage.classList.remove('error-shown');
+    this.confirmMasterPasswordMessage.classList.add('error-hidden');
   }
 };
 
@@ -145,6 +147,11 @@ Popup.prototype.copyPasswordToClipboard = function() {
 };
 
 Popup.prototype.fillForm = function() {
+  if (!this.scriptInjectionAllowed) {
+    this.showFillFormMessage('Can\'t access this page.');
+    return;
+  }
+
   chrome.tabs.executeScript(
     this.tab.id, {file: 'content_script.js'}, function() {
       chrome.tabs.sendRequest(this.tab.id, {
@@ -154,11 +161,16 @@ Popup.prototype.fillForm = function() {
         if (passwordSet) {
           window.close();
         } else {
-          this.fillFormMessage.classList.add('error-shown');
-          this.fillFormMessage.classList.remove('error-hidden');
+          this.showFillFormMessage('No empty password fields found.');
         }
       }.bind(this));
     }.bind(this));
+};
+
+Popup.prototype.showFillFormMessage = function(message) {
+  this.fillFormMessage.innerText = message;
+  this.fillFormMessage.classList.remove('error-hidden');
+  this.fillFormMessage.classList.add('error-shown');
 };
 
 function PasswordBuilder(bits) {
