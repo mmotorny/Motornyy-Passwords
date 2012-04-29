@@ -102,7 +102,7 @@ Popup.prototype.updatePassword = function() {
   var passwordBits = convertWordArrayToBinaryString(
       sjcl.misc.pbkdf2(masterPassword, sjcl.hash.sha256.hash(tag)));
 
-  passwordBits = halvePasswordBits(halvePasswordBits(passwordBits));
+  passwordBits = halvePasswordBits(passwordBits);
   this.password = new PasswordBuilder(passwordBits).build();
 
   var hashedPasswordBits = convertWordArrayToBinaryString(
@@ -182,23 +182,70 @@ function PasswordBuilder(bits) {
   this.password = '';
 }
 
-PasswordBuilder.prototype.build = function() {
-  while (true) {
-    if (!this.addCharacter_('ABCDEFGHIJKLMNOP', 4)) {
-      break;
-    }
-    if (!this.addCharacter_('abcdefghijklmnop', 4)) {
-      break;
-    }
-    if (!this.addCharacter_('01234567', 3)) {
-      break;
-    }
-    if (!this.addCharacter_('!@#$%^&*', 3)) {
-      break;
-    }
+const MASK_TO_CHARACTER_SET = [''];
+const MASK_TO_ENTROPY = [0];
+const CHARACTER_TO_BIT_CLEAR_MASK = {};
+
+(function() {
+  const BASE_CHARACTER_SETS = [
+      '23456789', '@#$%&*+?', 'ABCDEFGH', 'abcdefgh'];
+  const ADDITIONAL_CHARACTER_SETS = [
+      '', '=~<>', 'JKMNPQRSTUWXYZ', 'jkmnpqrstuwxyz'];
+
+  for (var characterSetMask = 1; characterSetMask < 16; ++characterSetMask) {
+    var entropy = 2;
+    var characterSet = '';
+
+    var baseCharacterSetMask = characterSetMask;
+    BASE_CHARACTER_SETS.forEach(function(baseCharacterSet) {
+      if (baseCharacterSetMask & 1) {
+        ++entropy;
+        characterSet += baseCharacterSet;
+      }
+      baseCharacterSetMask >>= 1;
+    });
+    
+    var additionalCharacterSetMask = characterSetMask;
+    ADDITIONAL_CHARACTER_SETS.forEach(function(additionalCharacterSet) {
+      if (additionalCharacterSetMask & 1) {
+        characterSet += additionalCharacterSet;
+      }
+      additionalCharacterSetMask >>= 1;
+    });
+
+    MASK_TO_CHARACTER_SET.push(characterSet.substr(0, Math.pow(2, entropy)));
+    MASK_TO_ENTROPY.push(entropy);
   }
   
-  return this.password;
+  function initCharacterToBitClearMask(characterSet, characterSetIndex) {
+    var bitClearMask = ~Math.pow(2, characterSetIndex);
+    
+    for (var characterIndex = 0; characterIndex < characterSet.length; 
+        ++characterIndex) {
+      CHARACTER_TO_BIT_CLEAR_MASK[characterSet[characterIndex]] = bitClearMask;
+    }
+  }
+
+  BASE_CHARACTER_SETS.forEach(initCharacterToBitClearMask);
+  ADDITIONAL_CHARACTER_SETS.forEach(initCharacterToBitClearMask);
+})();
+
+PasswordBuilder.prototype.build = function() {
+  while (true) {
+    var mask = 0xF;
+
+    for (var characterIndex = 0; characterIndex < 8; ++characterIndex) {
+      if (!this.addCharacter_(
+          MASK_TO_CHARACTER_SET[mask], MASK_TO_ENTROPY[mask])) {
+        return this.password;
+      }
+
+      if (characterIndex >= 4) {
+        mask &= CHARACTER_TO_BIT_CLEAR_MASK[
+            this.password[this.password.length - 1]];
+      }
+    }
+  }
 };
 
 PasswordBuilder.prototype.addCharacter_ = function(characters, entropy) {
