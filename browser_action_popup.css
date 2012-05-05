@@ -82,6 +82,10 @@ html {
   opacity: 0;
 }
 
+.special-requirements-spacer {
+  height: 0.3em;
+}
+
 .bit-input {
   padding: 4px 4px;
 }
