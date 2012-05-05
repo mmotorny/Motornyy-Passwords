@@ -24,8 +24,8 @@ function Popup(tab) {
   this.confirmMasterPasswordMessage = document.getElementsByClassName(
       'confirm-master-password-message')[0];
   this.tagInput = document.getElementsByClassName('tag-input')[0];
-  this.ensureStrengthCheckbox = document.getElementsByClassName(
-      'ensure-strength-checkbox')[0];
+  this.lettersOnlyCheckbox = document.getElementsByClassName(
+      'letters-only-checkbox')[0];
   this.bitInput = document.getElementsByClassName('bit-input')[0];
   this.bitElements = document.getElementsByClassName('bit');
   this.shutterSound = document.getElementById('shutter-sound');
@@ -58,7 +58,7 @@ function Popup(tab) {
   
   this.tagInput.addEventListener('input', this.updatePassword_.bind(this));
   
-  this.ensureStrengthCheckbox.addEventListener(
+  this.lettersOnlyCheckbox.addEventListener(
       'change', this.updatePassword_.bind(this));
 
   this.bitInput.addEventListener(
@@ -109,7 +109,7 @@ Popup.prototype.updatePassword_ = function() {
 
   passwordBits = halvePasswordBits(passwordBits);
   this.password = new PasswordBuilder(
-      passwordBits, 16, this.ensureStrengthCheckbox.checked).build();
+      passwordBits, 16, this.lettersOnlyCheckbox.checked).build();
 
   var hashedPasswordBits = convertWordArrayToBinaryString(
       sjcl.hash.sha256.hash(this.password));
@@ -183,10 +183,10 @@ Popup.prototype.showFillFormMessage_ = function(message) {
   this.fillFormMessage.classList.add('error-shown');
 };
 
-function PasswordBuilder(bits, maxPasswordLength, ensureStrength) {
+function PasswordBuilder(bits, maxPasswordLength, lettersOnly) {
   this.bits = bits;
   this.maxPasswordLength = maxPasswordLength;
-  this.ensureStrength = ensureStrength;
+  this.lettersOnly = lettersOnly;
   
   this.password = '';
 }
@@ -195,8 +195,8 @@ const MASK_TO_CHARACTER_SET = [''];
 const MASK_TO_ENTROPY = [0];
 const CHARACTER_TO_BIT_CLEAR_MASK = {};
 
-var LETTER_ONLY_CHARACTER_SET = '';
-const LETTER_ONLY_ENTROPY = 5;
+var LETTERS_ONLY_CHARACTER_SET = '';
+const LETTERS_ONLY_ENTROPY = 5;
 
 (function() {
   const BASE_CHARACTER_SETS = [
@@ -241,15 +241,23 @@ const LETTER_ONLY_ENTROPY = 5;
   BASE_CHARACTER_SETS.forEach(initCharacterToBitClearMask);
   ADDITIONAL_CHARACTER_SETS.forEach(initCharacterToBitClearMask);
 
-  LETTER_ONLY_CHARACTER_SET = (
+  LETTERS_ONLY_CHARACTER_SET = (
       BASE_CHARACTER_SETS[2] + BASE_CHARACTER_SETS[3] +
       ADDITIONAL_CHARACTER_SETS[2] + ADDITIONAL_CHARACTER_SETS[3]).
-          substr(0, Math.pow(2, LETTER_ONLY_ENTROPY));
+          substr(0, Math.pow(2, LETTERS_ONLY_ENTROPY));
     
 })();
 
 PasswordBuilder.prototype.build = function() {
-  if (this.ensureStrength) {
+  if (this.lettersOnly) {
+    while (true) {
+      if (this.password.length == this.maxPasswordLength || 
+          !this.addCharacter_(
+              LETTERS_ONLY_CHARACTER_SET, LETTERS_ONLY_ENTROPY)) {
+        return this.password;
+      }
+    }
+  } else {
     while (true) {
       var mask = 0xF;
     
@@ -266,13 +274,6 @@ PasswordBuilder.prototype.build = function() {
         } else {
           mask = 0xF;
         }
-      }
-    }
-  } else {
-    while (true) {
-      if (this.password.length == this.maxPasswordLength || 
-          !this.addCharacter_(LETTER_ONLY_CHARACTER_SET, LETTER_ONLY_ENTROPY)) {
-        return this.password;
       }
     }
   }
