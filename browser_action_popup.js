@@ -103,7 +103,7 @@ Popup.prototype.updatePassword = function() {
       sjcl.misc.pbkdf2(masterPassword, sjcl.hash.sha256.hash(tag)));
 
   passwordBits = halvePasswordBits(passwordBits);
-  this.password = new PasswordBuilder(passwordBits).build();
+  this.password = new PasswordBuilder(passwordBits, 16, true).build();
 
   var hashedPasswordBits = convertWordArrayToBinaryString(
       sjcl.hash.sha256.hash(this.password));
@@ -177,8 +177,11 @@ Popup.prototype.showFillFormMessage = function(message) {
   this.fillFormMessage.classList.add('error-shown');
 };
 
-function PasswordBuilder(bits) {
+function PasswordBuilder(bits, maxPasswordLength, ensureStrength) {
   this.bits = bits;
+  this.maxPasswordLength = maxPasswordLength;
+  this.ensureStrength = ensureStrength;
+  
   this.password = '';
 }
 
@@ -188,9 +191,9 @@ const CHARACTER_TO_BIT_CLEAR_MASK = {};
 
 (function() {
   const BASE_CHARACTER_SETS = [
-      '23456789', '@#$%&*+?', 'ABCDEFGH', 'abcdefgh'];
+      '23456789', '!#$%^&*+', 'abcdefgh', 'ABCDEFGH'];
   const ADDITIONAL_CHARACTER_SETS = [
-      '', '=~<>', 'JKMNPQRSTUWXYZ', 'jkmnpqrstuwxyz'];
+      '', '()_-', 'jkmnpqrstuwxyz', 'JKMNPQRSTUWXYZ'];
 
   for (var characterSetMask = 1; characterSetMask < 16; ++characterSetMask) {
     var entropy = 2;
@@ -235,14 +238,17 @@ PasswordBuilder.prototype.build = function() {
     var mask = 0xF;
 
     for (var characterIndex = 0; characterIndex < 8; ++characterIndex) {
-      if (!this.addCharacter_(
-          MASK_TO_CHARACTER_SET[mask], MASK_TO_ENTROPY[mask])) {
+      if (this.password.length == this.maxPasswordLength || 
+          !this.addCharacter_(
+              MASK_TO_CHARACTER_SET[mask], MASK_TO_ENTROPY[mask])) {
         return this.password;
       }
 
-      if (characterIndex >= 4) {
+      if (characterIndex < 3) {
         mask &= CHARACTER_TO_BIT_CLEAR_MASK[
             this.password[this.password.length - 1]];
+      } else {
+        mask = 0xF;
       }
     }
   }
