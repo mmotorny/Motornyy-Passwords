@@ -1,4 +1,4 @@
-function onLoad() {
+window.addEventListener('load', function() {
   chrome.windows.getCurrent(function(currentWindow) {
     chrome.tabs.query(
       {
@@ -9,11 +9,11 @@ function onLoad() {
         new Popup(tabs[0]);
       });
   });
-}
+});
 
 function Popup(tab) {
   this.tab = tab;
-  
+
   this.motornyyLogo = document.getElementsByClassName('motornyy-logo')[0];
   this.masterPasswordInput = document.getElementsByClassName(
       'master-password-input')[0];
@@ -35,10 +35,10 @@ function Popup(tab) {
       'fill-form-message')[0];
 
   this.parseUrl_(tab.url);
-  
+
   this.confirmMasterPassword_();
   this.updatePassword_();
-  
+
   this.motornyyLogo.addEventListener('click', function() {
     chrome.tabs.create({
       url: 'http://motornyy.com/'
@@ -55,19 +55,19 @@ function Popup(tab) {
     this.confirmMasterPassword_();
     this.updatePassword_();
   }.bind(this));
-  
+
   this.tagInput.addEventListener('input', this.updatePassword_.bind(this));
-  
+
   this.lettersOnlyCheckbox.addEventListener(
       'change', this.updatePassword_.bind(this));
 
   this.bitInput.addEventListener(
       'click', this.copyPasswordToClipboard_.bind(this));
-  
+
   this.fillFormButton.addEventListener('click', this.fillForm_.bind(this));
-  
+
   document.body.addEventListener('keypress', function(event) {
-    if (event.charCode == 13 && 
+    if (event.charCode == 13 &&
         !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey &&
         event.target != this.fillFormButton) {
       this.fillForm_();
@@ -79,19 +79,19 @@ Popup.prototype.parseUrl_ = function(url) {
   var urlParser = document.createElement('a');
   urlParser.href = url;
   var domain = urlParser.host;
-  
+
   this.scriptInjectionAllowed = urlParser.protocol != 'chrome:';
 
   var lastDotIndex = domain.lastIndexOf('.');
-  this.tagInput.value = lastDotIndex == -1 ? 
+  this.tagInput.value = lastDotIndex == -1 ?
       domain : domain.substr(domain.lastIndexOf('.', lastDotIndex - 1) + 1);
 };
 
 Popup.prototype.confirmMasterPassword_ = function() {
-  this.masterPasswordMessage.innerText = 'Time to guess: ' + 
+  this.masterPasswordMessage.innerText = 'Time to guess: ' +
       zxcvbn(this.masterPasswordInput.value).crack_time_display + '.';
-  
-  if (this.masterPasswordInput.value != 
+
+  if (this.masterPasswordInput.value !=
       this.confirmMasterPasswordInput.value) {
     this.confirmMasterPasswordMessage.classList.remove('error-hidden');
     this.confirmMasterPasswordMessage.classList.add('error-shown');
@@ -135,8 +135,8 @@ function convertWordArrayToBinaryString(words) {
 function halvePasswordBits(passwordBits) {
   var halfOfPasswordBits = '';
   for (var bitIndex = 0; bitIndex < passwordBits.length / 2; ++bitIndex) {
-    halfOfPasswordBits += 
-        passwordBits[bitIndex * 2] == passwordBits[bitIndex * 2 + 1] ? 
+    halfOfPasswordBits +=
+        passwordBits[bitIndex * 2] == passwordBits[bitIndex * 2 + 1] ?
             '0' : '1';
   }
   return halfOfPasswordBits;
@@ -151,7 +151,7 @@ Popup.prototype.copyPasswordToClipboard_ = function() {
   document.execCommand('copy');
   document.body.removeChild(passwordInput);
   this.bitInput.focus();
-  
+
   this.bitMessage.innerText = 'Copied to clipboard.';
   this.shutterSound.play();
 };
@@ -187,7 +187,7 @@ function PasswordBuilder(bits, maxPasswordLength, lettersOnly) {
   this.bits = bits;
   this.maxPasswordLength = maxPasswordLength;
   this.lettersOnly = lettersOnly;
-  
+
   this.password = '';
 }
 
@@ -216,7 +216,7 @@ const LETTERS_ONLY_ENTROPY = 5;
       }
       baseCharacterSetMask >>= 1;
     });
-    
+
     var additionalCharacterSetMask = characterSetMask;
     ADDITIONAL_CHARACTER_SETS.forEach(function(additionalCharacterSet) {
       if (additionalCharacterSetMask & 1) {
@@ -228,11 +228,11 @@ const LETTERS_ONLY_ENTROPY = 5;
     MASK_TO_CHARACTER_SET.push(characterSet.substr(0, Math.pow(2, entropy)));
     MASK_TO_ENTROPY.push(entropy);
   }
-  
+
   function initCharacterToBitClearMask(characterSet, characterSetIndex) {
     var bitClearMask = ~Math.pow(2, characterSetIndex);
-    
-    for (var characterIndex = 0; characterIndex < characterSet.length; 
+
+    for (var characterIndex = 0; characterIndex < characterSet.length;
         ++characterIndex) {
       CHARACTER_TO_BIT_CLEAR_MASK[characterSet[characterIndex]] = bitClearMask;
     }
@@ -245,13 +245,13 @@ const LETTERS_ONLY_ENTROPY = 5;
       BASE_CHARACTER_SETS[2] + BASE_CHARACTER_SETS[3] +
       ADDITIONAL_CHARACTER_SETS[2] + ADDITIONAL_CHARACTER_SETS[3]).
           substr(0, Math.pow(2, LETTERS_ONLY_ENTROPY));
-    
+
 })();
 
 PasswordBuilder.prototype.build = function() {
   if (this.lettersOnly) {
     while (true) {
-      if (this.password.length == this.maxPasswordLength || 
+      if (this.password.length == this.maxPasswordLength ||
           !this.addCharacter_(
               LETTERS_ONLY_CHARACTER_SET, LETTERS_ONLY_ENTROPY)) {
         return this.password;
@@ -260,14 +260,14 @@ PasswordBuilder.prototype.build = function() {
   } else {
     while (true) {
       var mask = 0xF;
-    
+
       for (var characterIndex = 0; characterIndex < 8; ++characterIndex) {
-        if (this.password.length == this.maxPasswordLength || 
+        if (this.password.length == this.maxPasswordLength ||
             !this.addCharacter_(
                 MASK_TO_CHARACTER_SET[mask], MASK_TO_ENTROPY[mask])) {
           return this.password;
         }
-    
+
         if (characterIndex < 3) {
           mask &= CHARACTER_TO_BIT_CLEAR_MASK[
               this.password[this.password.length - 1]];
@@ -283,7 +283,7 @@ PasswordBuilder.prototype.addCharacter_ = function(characters, entropy) {
   if (this.bits.length < entropy) {
     return false;
   }
-  
+
   this.password += characters[parseInt(this.bits.substr(0, entropy), 2)];
   this.bits = this.bits.substr(entropy);
   return true;

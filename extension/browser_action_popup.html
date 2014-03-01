@@ -10,12 +10,12 @@
   <script src="browser_action_popup.js"></script>
 </head>
 
-<body class="popup" onload="onLoad()">
+<body class="popup">
   <div class="popup-title">
     Passwords
     <img class="motornyy-logo" src="motornyy.png">
   </div>
-  
+
   <div class="section">
     <div class="label">Master password</div>
     <input type="password" class="input master-password-input">
@@ -32,7 +32,7 @@
     <div class="label">Tag</div>
     <input type="text" class="input tag-input">
   </div>
-  
+
   <div class="section">
     <div class="label">Special requirements</div>
     <div class="special-requirements-spacer"></div>
@@ -45,20 +45,12 @@
   <div class="section">
     <div class="label">Password</div>
     <div class="input bit-input" tabindex="-1">
-      <script>
-        for (var i = 0; i < 4; ++i) {
-          document.write('<div class="bit-row">');
-          for (var j = 0; j < 64; ++j) {
-            document.write('<div class="bit bit-zero"></div>');
-          }
-          document.write('</div>');
-        }
-      </script>
+      <script src="write_bit_input.js"></script>
     </div>
     <audio id="shutter-sound" src="shutter.mp3" preload="auto"></audio>
     <div class="bit-message information">Click to copy to clipboard.</div>
   </div>
-  
+
   <input type="button" class="button fill-form-button" value="Fill form">
   <span class="fill-form-message error error-hidden"></span>
 </body>
