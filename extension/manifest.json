@@ -1,19 +1,22 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Motornyy Passwords",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Thousand of passwords for the cognitive price of one.",
   "icons": {
     "48": "icon_48.png",
     "128": "icon_128.png"
   },
   "permissions": [
-    "http://*/*",
-    "https://*/*",
     "clipboardWrite",
-    "tabs"
+    "tabs",
+    "scripting"
   ],
-  "browser_action": {
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "action": {
     "default_icon": "icon_17.png",
     "default_title": "Invent password",
     "default_popup": "browser_action_popup.html"

@@ -162,19 +162,21 @@ Popup.prototype.fillForm_ = function() {
     return;
   }
 
-  chrome.tabs.executeScript(
-    this.tab.id, {file: 'content_script.js'}, function() {
-      chrome.tabs.sendRequest(this.tab.id, {
-        password: this.password
-      },
-      function(passwordSet) {
-        if (passwordSet) {
-          window.close();
-        } else {
-          this.showFillFormMessage_('No empty password fields found.');
-        }
-      }.bind(this));
+  chrome.scripting.executeScript({
+    target: { tabId: this.tab.id },
+    files: ['content_script.js'],
+  }, function() {
+    chrome.tabs.sendMessage(this.tab.id, {
+      password: this.password
+    },
+    function(passwordSet) {
+      if (passwordSet) {
+        window.close();
+      } else {
+        this.showFillFormMessage_('No empty password fields found.');
+      }
     }.bind(this));
+  }.bind(this));
 };
 
 Popup.prototype.showFillFormMessage_ = function(message) {

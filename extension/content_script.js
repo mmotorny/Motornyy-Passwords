@@ -2,7 +2,7 @@ var injected;
 if (!injected) {
   injected = true;
 
-  chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var passwordSet = false;
 
     var inputElements = document.getElementsByTagName('input');
