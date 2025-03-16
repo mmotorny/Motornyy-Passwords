@@ -16,25 +16,19 @@ if (!injected) {
         
         passwordSet = true;
         
-        var keyDownEvent = document.createEvent('KeyboardEvent');
-        keyDownEvent.initKeyboardEvent(
-            'keydown', true, true, window, '', '', 0, '', false, '');
-        inputElement.dispatchEvent(keyDownEvent);
-
-        var keyPressEvent = document.createEvent('KeyboardEvent');
-        keyPressEvent.initKeyboardEvent(
-            'keypress', true, true, window, '', '', 0, '', false, '');
-        inputElement.dispatchEvent(keyPressEvent);
-
-        var textEvent = document.createEvent('TextEvent');
-        textEvent.initTextEvent(
-            'textInput', true, true, window, request.password);
-        inputElement.dispatchEvent(textEvent);
-
-        var keyUpEvent = document.createEvent('KeyboardEvent');
-        keyUpEvent.initKeyboardEvent(
-            'keyup', true, true, window, '', '', 0, '', false, '');
-        inputElement.dispatchEvent(keyUpEvent);
+        inputElement.value = request.password;
+        
+        inputElement.dispatchEvent(new InputEvent('input', {
+          bubbles: true,
+          cancelable: true,
+          inputType: 'insertText',
+          data: request.password
+        }));
+        
+        inputElement.dispatchEvent(new Event('change', {
+          bubbles: true,
+          cancelable: true
+        }));
       }
     }
     
