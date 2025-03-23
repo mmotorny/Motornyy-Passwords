@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Motornyy Passwords",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Thousand of passwords for the cognitive price of one.",
   "icons": {
     "48": "icon_48.png",
